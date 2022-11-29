@@ -1,0 +1,190 @@
+<html lang="en">
+
+<head>
+    <title>Whack-A-Mole Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <!-- style sheets for whack-a-mole targets -->
+    <style>
+        .circleCentral {
+            border-radius: 100%;
+            width: 30px;
+            height: 30px;
+            background: green;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .circle {
+            border-radius: 100%;
+            background: red;
+            position: absolute;
+            /* transform: translate(-50%, -50%); */
+        }
+        /* .circle30px {
+            border-radius: 100%;
+            width: 30px;
+            height: 30px;
+            background: red;
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+        
+        .circle50px {
+            border-radius: 100%;
+            width: 50px;
+            height: 50px;
+            background: red;
+            position: absolute;
+            transform: translate(-50%, -50%);
+        } */
+        
+        .displaytext {
+            font-family: 'Silkscreen', cursive;
+        }
+    </style>
+</head>
+
+<!-- Page HTML -->
+
+<body onload="StartUpSettings()">
+    <!-- TODO: add score, round count..etc -->
+    <main id="centralCircle" class="circleCentral" onclick="StartRound()"></main>
+
+    <h1>
+        <p id="text" class="displaytext">Whack-A-Mole Game</p>
+    </h1>
+    <header>
+        <!-- display text -->
+        <h2 id="roundnumber" class="displaytext"></h2>
+        <p id="printround" class="displaytext"></p>
+        <h2 id="score" class="displaytext"></h2>
+        <p id="printscore" class="displaytext"></p>
+    </header>
+    <div class="circle" id="target"></div>
+</body>
+
+<script type="text/javascript">
+    // Game Logic goes here
+    var count = 0
+    var scorecount = 0
+    const mole = document.getElementById('target');
+    btn = document.getElementById('centralCircle')
+    
+    var roundStarted=false;
+    function StartRound() {
+        if(roundStarted) {return};
+        if( count>=60 )
+            if(Confirm("New Game?"))
+                count=0;
+            else
+                return;
+        
+        roundStarted=true;
+                // count how many times
+        count++;
+        document.getElementById('printround').innerHTML = count;
+        // open popup
+        printtext();
+
+        clearTimeout(moleTimer);
+        // show circle at random time
+        setTimeout(circleposition, getRandomTime());
+        mole.addEventListener('click', hitMole, 'once');
+    }
+
+    function printtext() {
+        // print score and round 
+        roundnum = document.getElementById('roundnumber')
+        score = document.getElementById('score')
+            // type in text
+        roundnum.innerHTML = "Round";
+        score.innerHTML = "Score";
+    }
+
+    function randomtarget() {
+        // store circle radius in an array!
+        circleR = ["10", "30", "50"];
+        // get random integer from 0-2
+        randomselect = Math.floor(Math.random() * 3);
+        // random circle size
+        mole.style.width = `${circleR[randomselect]}px`
+        mole.style.height = `${circleR[randomselect]}px`
+        console.log(circleR[randomselect]);
+    }
+    
+    var moleTimer=undefined;
+    function circleposition(Xpos, Ypos) {
+        mole.style.display = "initial";
+        // get random integer between width and height
+        Xmax = Math.ceil(window.innerWidth - 10);
+        Ymax = Math.floor(window.innerHeight - 60);
+        min = 10;
+        Xpos = Math.floor(Math.random() * (Xmax - min + 1) + min);
+        Ypos = Math.floor(Math.random() * (Ymax - min + 1) + min);
+        // get circle size
+        randomtarget();
+        // get circle position
+        mole.style.left = `${Xpos}px`;
+        mole.style.bottom = `${Ypos}px`
+        //console.log(circle.style.left + ", " +  circle.style.bottom);
+        if(typeof moleTimer==="number"){
+            clearTimeout(moleTimer);
+            console.log("clear");
+        }
+        else
+            console.log("No clear");
+
+        moleTimer=setTimeout(()=>{
+            mole.style.display = "none";
+            roundStarted=false;
+            mole.removeEventListener('click',hitMole);
+        }, 
+        getRandomTime());
+    }
+
+    //a random amount of seconds is calculated between 2 and 5 seconds
+    function getRandomTime() {
+        var min = 1,
+            max = 3,
+            rand = Math.floor(Math.random() * (max - min + 1) + min);
+        console.log(rand)
+        return rand * 1000;
+    }
+
+    // function click() {
+        
+    //     clearTimeout(moleTimer);
+    //     // show circle at random time
+    //     setTimeout(circleposition, getRandomTime());
+    //     mole.addEventListener('click',hitMole,'once');
+        
+
+    //     return;
+    // }
+
+    function hitMole(event) {
+        console.log("Hit!");
+        roundStarted=false;
+        //mole.removeEventListener('click',clickcircle);
+        if(typeof moleTimer==="number"){
+            clearTimeout(moleTimer);
+            console.log("clear");
+        }
+        else
+            console.log("No clear");
+            mole.style.display = "none";
+            scorecount++;console.log("score="+scorecount);
+            document.getElementById('printscore').innerHTML = `${scorecount}`;
+            //clearTimeout(moleTimer);
+            return;
+    }
+    
+</script>
+
+</html>
